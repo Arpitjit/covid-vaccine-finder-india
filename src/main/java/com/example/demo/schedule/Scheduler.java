@@ -6,7 +6,6 @@ import com.vonage.client.VonageClient;
 import com.vonage.client.sms.MessageStatus;
 import com.vonage.client.sms.SmsSubmissionResponse;
 import com.vonage.client.sms.messages.TextMessage;
-import com.vonage.client.voice.Call;
 import com.vonage.client.voice.ncco.Ncco;
 import com.vonage.client.voice.ncco.TalkAction;
 import org.apache.tomcat.util.json.ParseException;
@@ -24,8 +23,14 @@ import java.util.HashMap;
 @Component
 public class Scheduler {
 
+    //update zip  code to the your area
+    public static final String PIN_CODE = "451001";
+
     public static final String WEB_URL =
-            "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode=451001&date=";
+            "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByPin?pincode="+PIN_CODE+"&date=";
+
+
+    public final String PHONE_NUMBER = "91*******";
 
     @Scheduled(cron = "0 */1 * * * ?")
     public void cronJobSch() throws ParseException, JsonProcessingException {
@@ -33,10 +38,6 @@ public class Scheduler {
         Date now = new Date();
         String strDate = sdf.format(now);
         System.out.println("Java cron job expression:: " + strDate);
-
-        String fooResourceUrl
-                = "http://localhost:8080/spring-rest/foos";
-
 
         SimpleDateFormat formatter= new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss z");
 
@@ -48,7 +49,6 @@ public class Scheduler {
             date = c.getTime();
 
             ResponseEntity<String> response = checkAndSendMessage(formatter.format(date));
-            //System.out.println(response);
 
         }
 
@@ -85,13 +85,9 @@ public class Scheduler {
             for (HashMap<String, Integer> mp : sessions
             ) {
 
-               /* System.out.println(mp.toString());
-                System.out.println("teset::::" + mp.get("min_age_limit"));*/
-
                 if (mp.get("min_age_limit") == 18 && mp.get("available_capacity") > 0 ) {
 
-                    sendSms("919880998442", centerName);
-                    sendSms("917738707816", centerName);
+                    sendSms(PHONE_NUMBER, centerName);
 
                 }
             }
@@ -100,11 +96,7 @@ public class Scheduler {
     }
 
     public void sendSms(String number, String center) {
-        VonageClient client = VonageClient.builder().apiKey("4eedecf1").apiSecret("cdLHdMDHBW21amVU").build();
-//        VonageClient client = VonageClient.builder()
-//                .applicationId("66278625-9ba2-40aa-916a-f76bb97d6f5b")
-//                .privateKeyPath("/key/private.key")
-//                .build();
+        VonageClient client = VonageClient.builder().apiKey("ADD_YOUR_KEY_HERE").apiSecret("ADD_SEECRET_HERE").build();
 
 
 
